@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio Intelligence // Documentación Técnica - Coolest Projects 2026</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Space Grotesk, JetBrains Mono, Kalam -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        toad: {
+                            bg: '#28b455',        /* Verde principal estilo póster */
+                            bgDark: '#1f9d47',    /* Verde geométrico secundario */
+                            bgLight: '#34c462',   /* Verde geométrico claro */
+                            card: '#0b3128',      /* Verde bosque oscuro de las tarjetas */
+                            cardBorder: '#061d17',/* Borde oscuro profundo */
+                            termHeader: '#122b26',/* Barra superior de ventana Terminal */
+                            ink: '#07261d',       /* Tinta oscura sobre fondo verde */
+                            mint: '#d8f3dc',      /* Texto claro dentro de tarjetas */
+                            neon: '#52f296',      /* Acento verde neón */
+                            amber: '#ffd166'      /* Acento amarillo cálido */
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        maker: ['Kalam', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Fondo geométrico inspirado en el póster TOAD */
+        body {
+            background-color: #28b455;
+            background-image: 
+                linear-gradient(135deg, rgba(24, 138, 60, 0.45) 25%, transparent 25%),
+                linear-gradient(225deg, rgba(56, 206, 103, 0.35) 25%, transparent 25%),
+                linear-gradient(45deg, rgba(20, 125, 53, 0.3) 25%, transparent 25%),
+                linear-gradient(315deg, rgba(40, 180, 85, 0.4) 25%, #28b455 25%);
+            background-size: 100vw 100vh;
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+
+        /* Estilo de título gigante blanco con contorno grueso oscuro */
+        .poster-title-bio {
+            color: #ffffff;
+            font-size: clamp(3.2rem, 12vw, 6.8rem);
+            line-height: 0.92;
+            letter-spacing: -0.03em;
+            -webkit-text-stroke: 2.5px #07261d;
+            paint-order: stroke fill;
+            text-shadow: 
+                4px 4px 0px #07261d,
+                -1.5px -1.5px 0px #07261d,
+                1.5px -1.5px 0px #07261d,
+                -1.5px 1.5px 0px #07261d,
+                0px 5px 0px #07261d;
+        }
+
+        /* Sub-línea "INTELLIGENCE" ajustada con clamp() para que entre completa en cualquier celular */
+        .poster-title-intelligence {
+            color: #ffffff;
+            font-size: clamp(1.85rem, 6.6vw, 4.35rem);
+            line-height: 1;
+            letter-spacing: -0.02em;
+            -webkit-text-stroke: 2px #07261d;
+            paint-order: stroke fill;
+            text-shadow: 
+                3px 3px 0px #07261d,
+                -1.5px -1.5px 0px #07261d,
+                1.5px -1.5px 0px #07261d,
+                -1.5px 1.5px 0px #07261d,
+                0px 4px 0px #07261d;
+        }
+
+        @media (min-width: 640px) {
+            .poster-title-bio {
+                -webkit-text-stroke: 4px #07261d;
+                text-shadow: 
+                    6px 6px 0px #07261d,
+                    -2px -2px 0px #07261d,
+                    2px -2px 0px #07261d,
+                    -2px 2px 0px #07261d,
+                    0px 8px 0px #07261d;
+            }
+            .poster-title-intelligence {
+                -webkit-text-stroke: 3.5px #07261d;
+                text-shadow: 
+                    5px 5px 0px #07261d,
+                    -2px -2px 0px #07261d,
+                    2px -2px 0px #07261d,
+                    -2px 2px 0px #07261d,
+                    0px 6px 0px #07261d;
+            }
+        }
+
+        /* Tarjetas verde bosque oscuro */
+        .toad-card {
+            background-color: #0b3128;
+            color: #e6f9ed;
+            border: 3px solid #061d17;
+            box-shadow: 0 10px 0px rgba(6, 29, 23, 0.45), 0 15px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Ventanas estilo Terminal para enmarcar las 3 fotografías */
+        .terminal-window {
+            background-color: #ffffff;
+            border: 3.5px solid #122b26;
+            border-radius: 0.75rem;
+            box-shadow: 0 12px 0px rgba(7, 34, 27, 0.5), 0 18px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .terminal-window:hover {
+            transform: translateY(-4px) rotate(0deg) !important;
+        }
+
+        /* Pantalla LCD 16x2 simulada */
+        .lcd-screen {
+            background-color: #143627;
+            color: #52f296;
+            font-family: 'JetBrains Mono', monospace;
+            text-shadow: 0 0 6px rgba(82, 242, 150, 0.5);
+            box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.85);
+        }
+
+        /* Ocultar barra de scroll en menú móvil */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Scrollbar general */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b3128;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #28b455;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="font-mono text-toad-ink min-h-screen selection:bg-toad-card selection:text-toad-neon pb-16">
+
+    <!-- Barra de Navegación Superior -->
+    <header class="sticky top-0 z-50 bg-toad-card/95 backdrop-blur-md border-b-4 border-toad-cardBorder text-toad-mint">
+        <div class="max-w-6xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center space-x-2">
+                <span class="w-3 h-3 rounded-full bg-toad-neon animate-pulse"></span>
+                <span class="font-bold text-xs sm:text-sm tracking-tight text-white">
+                    BIO INTELLIGENCE <span class="text-toad-neon"></span>
+                </span>
+            </div>
+
+            <!-- Enlaces rápidos adaptados a celular -->
+            <nav class="flex items-center space-x-3 sm:space-x-5 text-[11px] sm:text-xs overflow-x-auto max-w-full py-0.5 no-scrollbar">
+                <a href="#bitacora" class="hover:text-toad-neon whitespace-nowrap transition-colors">[01. Fotos]</a>
+                <a href="#arquitectura" class="hover:text-toad-neon whitespace-nowrap transition-colors">[02. Pinout]</a>
+                <a href="#matematica" class="hover:text-toad-neon whitespace-nowrap transition-colors">[03. Lógica]</a>
+                <a href="#codigo" class="hover:text-toad-neon whitespace-nowrap transition-colors">[04. Código]</a>
+                <a href="#futuro" class="hover:text-toad-neon whitespace-nowrap transition-colors">[05. Futuro]</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 space-y-12 sm:space-y-16">
+
+        <!-- =============================================================== -->
+        <!-- 1. CABECERA PRINCIPAL: "BIO INTELLIGENCE" ESTILO PÓSTER         -->
+        <!-- =============================================================== -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            
+            <!-- Bloque de Título Completo + Ícono Pixel Art -->
+            <div class="lg:col-span-8 space-y-3">
+                <div class="inline-flex flex-wrap items-center gap-2">
+                    <span class="bg-toad-card text-toad-neon text-[11px] sm:text-xs font-bold px-3 py-1 rounded-md border-2 border-toad-cardBorder shadow">
+                        COOLEST PROJECTS ARGENTINA 2026 • ESP32 v1.0
+                    </span>
+                    <span class="bg-white/90 text-toad-ink text-[11px] sm:text-xs font-extrabold px-2.5 py-1 rounded-md border-2 border-toad-ink">
+                        HARDWARE 
+                    </span>
+                </div>
+
+                <!-- Fila superior: "BIO" + Ícono Pixel Art al lado, y debajo "INTELLIGENCE" completo -->
+                <div class="flex flex-col space-y-1">
+                    <div class="flex items-center gap-3 sm:gap-5">
+                        <span class="poster-title-bio font-display font-extrabold uppercase select-none">
+                            BIO
+                        </span>
+
+                        <!-- Cuadro Pixel Art de Planta (estilo el ícono cuadrado junto al título en TOAD) -->
+                        <div class="w-16 h-16 sm:w-24 sm:h-24 bg-white border-4 border-toad-ink rounded-lg p-1.5 sm:p-2 shadow-[5px_5px_0px_#07261d] flex-shrink-0 flex items-center justify-center">
+                            <svg viewBox="0 0 16 16" class="w-full h-full" shape-rendering="crispEdges" aria-label="Planta Pixel Art">
+                                <!-- Tallo y hojas pixel art -->
+                                <rect x="7" y="6" width="2" height="6" fill="#07261d"/>
+                                <rect x="3" y="3" width="4" height="2" fill="#07261d"/>
+                                <rect x="2" y="4" width="2" height="3" fill="#07261d"/>
+                                <rect x="4" y="5" width="3" height="3" fill="#07261d"/>
+                                <rect x="3" y="4" width="3" height="3" fill="#28b455"/>
+                                <rect x="9" y="2" width="4" height="2" fill="#07261d"/>
+                                <rect x="12" y="3" width="2" height="3" fill="#07261d"/>
+                                <rect x="9" y="4" width="3" height="3" fill="#07261d"/>
+                                <rect x="10" y="3" width="3" height="3" fill="#52f296"/>
+                                <!-- Maceta pixel art -->
+                                <rect x="4" y="11" width="8" height="2" fill="#07261d"/>
+                                <rect x="5" y="13" width="6" height="2" fill="#07261d"/>
+                                <rect x="5" y="12" width="6" height="2" fill="#1f9d47"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Palabra INTELLIGENCE completa y adaptable -->
+                    <h1 class="poster-title-intelligence font-display font-extrabold uppercase break-words">
+                        INTELLIGENCE
+                    </h1>
+                </div>
+
+                <div class="pt-1">
+                    <span class="font-bold text-toad-ink text-xs sm:text-sm bg-white/85 inline-block px-3 py-1 rounded border-2 border-toad-ink shadow-sm">
+                        <i class="fa-solid fa-seedling text-toad-bgDark mr-1"></i> Monitoreo Botánico con ESP32 &amp; Bluetooth
+                    </span>
+                </div>
+            </div>
+
+            <!-- Descripción lateral derecha sobre el fondo verde -->
+            <div class="lg:col-span-4 space-y-3 text-toad-ink border-t-2 lg:border-t-0 lg:border-l-2 border-toad-ink/20 pt-4 lg:pt-0 lg:pl-6">
+                <p class="text-lg sm:text-xl font-bold italic leading-snug">
+                    Un sistema autónomo de inteligencia botánica que corre directo en tu ESP32.
+                </p>
+                <p class="text-xs sm:text-sm font-semibold leading-relaxed">
+                    Mide en tiempo real la humedad de sustrato de <strong>3 plantas de interior</strong> (<span class="underline">Coco</span>, <span class="underline">Dracaena Tricolor</span> y <span class="underline">Dracaena</span>), filtra el ruido eléctrico con 10 muestras por lectura, alerta en una pantalla <strong>LCD 16x2 I2C</strong> y sincroniza datos por <strong>Bluetooth Classic</strong> hacia el celular.
+                </p>
+            </div>
+        </section>
+
+        <!-- Barra de Especificaciones Técnicas -->
+        <section class="toad-card rounded-xl p-4 sm:p-6">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-xs">
+                <div class="bg-black/25 p-3 rounded-lg border border-white/10">
+                    <span class="text-toad-neon block font-bold mb-1">MICROCONTROLADOR</span>
+                    <span class="text-white font-semibold"><i class="fa-solid fa-microchip mr-1"></i> ESP32 (ADC 12-bit)</span>
+                </div>
+                <div class="bg-black/25 p-3 rounded-lg border border-white/10">
+                    <span class="text-toad-neon block font-bold mb-1">SENSORES SUELO</span>
+                    <span class="text-white font-semibold"><i class="fa-solid fa-bolt mr-1 text-toad-amber"></i> 3x FC-28 / YL-69 (ADC1)</span>
+                </div>
+                <div class="bg-black/25 p-3 rounded-lg border border-white/10">
+                    <span class="text-toad-neon block font-bold mb-1">PANTALLA &amp; RADIO</span>
+                    <span class="text-white font-semibold"><i class="fa-brands fa-bluetooth-b mr-1 text-sky-400"></i> LCD 16x2 I2C + SerialBT</span>
+                </div>
+                <div class="bg-black/25 p-3 rounded-lg border border-white/10">
+                    <span class="text-toad-neon block font-bold mb-1">CICLO DE CONTROL</span>
+                    <span class="text-white font-semibold"><i class="fa-solid fa-clock mr-1 text-toad-neon"></i> Modo 24H (Millis)</span>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 2. BITÁCORA Y LAS 3 IMÁGENES EN VENTANAS "TERMINAL"             -->
+        <!-- =============================================================== -->
+        <section id="bitacora" class="space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider bg-toad-ink text-toad-neon px-2.5 py-1 rounded">
+                        // 01. BITÁCORA REAL (10/10/2026)
+                    </span>
+                    <h2 class="text-2xl sm:text-4xl font-display font-extrabold text-toad-ink mt-2">
+                        Proceso de Desarrollo en Banco de Trabajo
+                    </h2>
+                </div>
+                <p class="font-maker text-lg sm:text-xl font-bold text-toad-ink">
+                    ¡Fotos 100% reales del armado! 📸
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+
+                <!-- ========================================================= -->
+                <!-- VENTANA TERMINAL 1 (ESPACIO PARA LA IMAGEN 1)             -->
+                <!-- ========================================================= -->
+                <div class="lg:col-span-7">
+                    <div class="terminal-window md:-rotate-1">
+                        <!-- Barra Superior de Terminal -->
+                        <div class="bg-toad-termHeader text-white px-3.5 py-2 flex items-center justify-between text-xs font-mono">
+                            <span class="font-bold flex items-center gap-2 truncate">
+                                <i class="fa-solid fa-terminal text-toad-neon"></i> Terminal — etapa_01_tinkercad.png
+                            </span>
+                            <div class="flex items-center space-x-2.5 text-slate-300 font-bold select-none ml-2">
+                                <span>—</span>
+                                <span>□</span>
+                                <span>✕</span>
+                            </div>
+                        </div>
+                        <!-- Barra de dirección -->
+                        <div class="bg-slate-200 text-slate-800 px-3 py-1 text-[11px] border-b border-slate-300 flex items-center justify-between truncate">
+                            <span class="truncate"><span class="text-red-600 font-bold">[&lt;-][-&gt;]</span> https://bio-intelligence.local/etapa-1-conceptual</span>
+                            <span class="ml-2 font-bold">[+]</span>
+                        </div>
+                        
+                        <!-- 🚨 AQUÍ PONER IMAGEN 1: Cambia el nombre en src="..." por tu primera foto 🚨 -->
+                        <div class="bg-slate-900 h-56 sm:h-72 overflow-hidden relative">
+                            <img src="foto1.png" 
+                                 alt="Etapa 1: Diseño Conceptual Tinkercad" 
+                                 class="w-full h-full object-cover"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/800x450/0b3128/52f296?text=IMAGEN+1:+Prototipo+Tinkercad';">
+                        </div>
+
+                        <div class="p-3.5 bg-white text-slate-900 text-xs space-y-1.5">
+                            <div class="font-bold text-sm text-toad-card">1. Prototipado y Validación Inicial</div>
+                            <p class="text-slate-700 leading-relaxed">
+                                <strong>Nota Técnica:</strong> Esquema conceptual inicial armado en Tinkercad para validar la lógica del divisor resistivo de humedad, visualización LCD e indicadores de riego antes de migrar al ESP32 con bus I2C y Bluetooth.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de comentario para Imagen 1 -->
+                <div class="lg:col-span-5 space-y-3">
+                    <div class="toad-card p-5 rounded-xl space-y-2">
+                        <span class="text-xs font-bold text-toad-neon uppercase">Apunte de Bitácora #01</span>
+                        <p class="font-maker text-lg sm:text-xl text-toad-amber leading-snug">
+                            "¡10/10/2026! Buscando los componentes. La mayoría los tenía, solo me faltaban dos sensores de humedad."
+                        </p>
+                    </div>
+                    <p class="text-toad-ink font-bold italic text-sm sm:text-base pl-2">
+                     
+                    </p>
+                </div>
+
+                <!-- Tarjeta de comentario para Imagen 2 -->
+                <div class="lg:col-span-5 order-2 lg:order-1 space-y-3">
+                    <div class="toad-card p-5 rounded-xl space-y-2">
+                        <span class="text-xs font-bold text-toad-neon uppercase">Apunte de Bitácora #02</span>
+                        <p class="font-maker text-lg sm:text-xl text-toad-amber leading-snug">
+                            "¡Empezamos con el desarrollo! Conectamos todos los sensores al ESP32 y la pantalla LCD 16x2 sobre la mesada para probar que todo prenda sin quemar nada."
+                        </p>
+                    </div>
+                    <p class="text-toad-ink font-bold italic text-sm sm:text-base pl-2">
+                      
+                    </p>
+                </div>
+
+                <!-- ========================================================= -->
+                <!-- VENTANA TERMINAL 2 (ESPACIO PARA LA IMAGEN 2)             -->
+                <!-- ========================================================= -->
+                <div class="lg:col-span-7 order-1 lg:order-2">
+                    <div class="terminal-window md:rotate-1">
+                        <!-- Barra Superior de Terminal -->
+                        <div class="bg-toad-termHeader text-white px-3.5 py-2 flex items-center justify-between text-xs font-mono">
+                            <span class="font-bold flex items-center gap-2 truncate">
+                                <i class="fa-solid fa-terminal text-toad-neon"></i> Terminal — etapa_02_protoboard.jpeg
+                            </span>
+                            <div class="flex items-center space-x-2.5 text-slate-300 font-bold select-none ml-2">
+                                <span>—</span>
+                                <span>□</span>
+                                <span>✕</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-200 text-slate-800 px-3 py-1 text-[11px] border-b border-slate-300 flex items-center justify-between truncate">
+                            <span class="truncate"><span class="text-red-600 font-bold">[&lt;-][-&gt;]</span> https://bio-intelligence.local/etapa-2-montaje</span>
+                            <span class="ml-2 font-bold">[+]</span>
+                        </div>
+
+                        <!-- 🚨 AQUÍ PONER IMAGEN 2: Cambia el nombre en src="..." por tu segunda foto 🚨 -->
+                        <div class="bg-slate-900 h-56 sm:h-72 overflow-hidden relative">
+                            <img src="componentes (1).jpeg" 
+                                 alt="Etapa 2: Montaje y Prueba Eléctrica en Protoboard" 
+                                 class="w-full h-full object-cover"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/800x450/0b3128/52f296?text=IMAGEN+2:+Montaje+en+Protoboard';">
+                        </div>
+
+                        <div class="p-3.5 bg-white text-slate-900 text-xs space-y-1.5">
+                            <div class="font-bold text-sm text-toad-card">2. Montaje y Prueba Eléctrica</div>
+                            <p class="text-slate-700 leading-relaxed">
+                                <strong>Nota Técnica:</strong> Integración del ESP32 NodeMCU en protoboard. Cableado de los 3 comparadores analógicos (AO) a las entradas del ADC1 (D34, D35, D32) y verificación del bus I2C (SDA=21, SCL=22) con el display LCD.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================================= -->
+                <!-- VENTANA TERMINAL 3 (ESPACIO PARA LA IMAGEN 3)             -->
+                <!-- ========================================================= -->
+                <div class="lg:col-span-7 order-3">
+                    <div class="terminal-window md:-rotate-1">
+                        <!-- Barra Superior de Terminal -->
+                        <div class="bg-toad-termHeader text-white px-3.5 py-2 flex items-center justify-between text-xs font-mono">
+                            <span class="font-bold flex items-center gap-2 truncate">
+                                <i class="fa-solid fa-terminal text-toad-neon"></i> Terminal — etapa_03_macetas_reales.jpeg
+                            </span>
+                            <div class="flex items-center space-x-2.5 text-slate-300 font-bold select-none ml-2">
+                                <span>—</span>
+                                <span>□</span>
+                                <span>✕</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-200 text-slate-800 px-3 py-1 text-[11px] border-b border-slate-300 flex items-center justify-between truncate">
+                            <span class="truncate"><span class="text-red-600 font-bold">[&lt;-][-&gt;]</span> https://bio-intelligence.local/etapa-3-calibracion</span>
+                            <span class="ml-2 font-bold">[+]</span>
+                        </div>
+
+                        <!-- 🚨 AQUÍ PONER IMAGEN 3: Cambia el nombre en src="..." por tu tercera foto 🚨 -->
+                        <div class="bg-slate-900 h-56 sm:h-72 overflow-hidden relative">
+                            <img src="listo (1).jpeg" 
+                                 alt="Etapa 3: Instalación y Calibración en Macetas Reales" 
+                                 class="w-full h-full object-cover"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/800x450/0b3128/52f296?text=IMAGEN+3:+Macetas+Reales';">
+                        </div>
+
+                        <div class="p-3.5 bg-white text-slate-900 text-xs space-y-1.5">
+                            <div class="font-bold text-sm text-toad-card">3. Calibración Botánica In-Situ</div>
+                            <p class="text-slate-700 leading-relaxed">
+                                <strong>Nota Técnica:</strong> Sensores insertados en sustrato real con rotulado manual de umbrales en macetas (Coco: 45%, Tricolor: 30%, Dracaena: 30%). Ensayos de hidratación dosificada con jeringa para calibrar constantes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de comentario para Imagen 3 -->
+                <div class="lg:col-span-5 order-4 space-y-3">
+                    <div class="toad-card p-5 rounded-xl space-y-2">
+                        <span class="text-xs font-bold text-toad-neon uppercase">Apunte de Bitácora #03</span>
+                        <p class="font-maker text-lg sm:text-xl text-toad-amber leading-snug">
+                            "¡Terminamosss! Cargamos el código, revisamos conexiones y calibramos los valores reales en tierra con Coco, Dracaena Tricolor y Dracaena."
+                        </p>
+                    </div>
+                    <p class="text-toad-ink font-bold italic text-sm sm:text-base pl-2">
+                    
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 3. ARQUITECTURA DE HARDWARE Y PINOUT                            -->
+        <!-- =============================================================== -->
+        <section id="arquitectura" class="space-y-6">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider bg-toad-ink text-toad-neon px-2.5 py-1 rounded">
+                    // 02. INGENIERÍA DE HARDWARE
+                </span>
+                <h2 class="text-2xl sm:text-4xl font-display font-extrabold text-toad-ink mt-2">
+                    Arquitectura &amp; Pinout del ESP32
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- Justificación electrónica de pines -->
+                <div class="lg:col-span-7 toad-card p-5 sm:p-6 rounded-xl space-y-4">
+                    <h3 class="text-base sm:text-lg font-bold text-toad-neon flex items-center gap-2">
+                        <i class="fa-solid fa-microchip"></i> ¿Por qué elegimos estos pines?
+                    </h3>
+
+                    <div class="space-y-3 text-xs sm:text-sm">
+                        <div class="bg-black/30 p-3.5 rounded-lg border-l-4 border-toad-neon">
+                            <div class="font-bold text-toad-neon mb-1">Pines D34, D35 y D32 (Módulo ADC1)</div>
+                            <p class="text-toad-mint/90 text-xs leading-relaxed">
+                                En el ESP32, el convertidor <strong>ADC2</strong> comparte recursos internos con el transceptor inalámbrico y bloquea sus lecturas cuando se activa el Bluetooth. Por eso asignamos los 3 sensores exclusivamente al <strong>ADC1</strong> (GPIOs 32 al 39), garantizando mediciones analógicas estables en todo momento.
+                            </p>
+                        </div>
+
+                        <div class="bg-black/30 p-3.5 rounded-lg border-l-4 border-toad-amber">
+                            <div class="font-bold text-toad-amber mb-1">Resolución de 12-Bits &amp; Atenuación 11dB</div>
+                            <p class="text-toad-mint/90 text-xs leading-relaxed">
+                                Configuramos <code>analogReadResolution(12)</code> (rango de 0 a 4095) junto con <code>analogSetAttenuation(ADC_11db)</code> para cubrir la excursión completa de voltaje hasta ~3.3V sin saturar la entrada.
+                            </p>
+                        </div>
+
+                        <div class="bg-black/30 p-3.5 rounded-lg border-l-4 border-sky-400">
+                            <div class="font-bold text-sky-400 mb-1">Bus I2C en GPIO 21 (SDA) y GPIO 22 (SCL)</div>
+                            <p class="text-toad-mint/90 text-xs leading-relaxed">
+                                Permite controlar la pantalla LCD 16x2 (dirección hexadecimal <code>0x27</code>) utilizando únicamente 2 líneas de comunicación en lugar de 12 pines GPIO paralelos.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulador Visual LCD 16x2 + Tabla de Pines -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="toad-card p-5 rounded-xl space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-toad-neon uppercase">Simulador Display LCD 16x2</span>
+                            <span class="text-[10px] text-toad-mint/70">I2C Addr: 0x27</span>
+                        </div>
+
+                        <!-- Pantalla Modo OK -->
+                        <div class="lcd-screen p-3.5 rounded-lg border-4 border-black/60 text-xs sm:text-sm tracking-widest space-y-1.5">
+                            <div class="flex justify-between bg-black/20 px-2 py-1 rounded">
+                                <span class="text-[10px] opacity-50">(0,0)</span>
+                                <span class="font-bold">Co:48%  Tr:35%</span>
+                                <span class="text-[10px] opacity-50">(15,0)</span>
+                            </div>
+                            <div class="flex justify-between bg-black/20 px-2 py-1 rounded">
+                                <span class="text-[10px] opacity-50">(0,1)</span>
+                                <span class="font-bold">Dr:40%  TODO OK</span>
+                                <span class="text-[10px] opacity-50">(15,1)</span>
+                            </div>
+                        </div>
+
+                        <!-- Pantalla Modo Alerta -->
+                        <div class="bg-black/30 p-2.5 rounded-lg border border-red-500/40 text-xs space-y-1">
+                            <span class="text-[11px] text-red-300 font-bold block">SI UNA PLANTA BAJA DE SU UMBRAL:</span>
+                            <div class="lcd-screen p-2 rounded flex justify-between text-xs">
+                                <span>Dr:25%</span>
+                                <span class="text-red-400 font-extrabold animate-pulse">REGAR!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mapeo Rápido -->
+                    <div class="toad-card p-5 rounded-xl text-xs space-y-2">
+                        <div class="font-bold text-toad-amber mb-2"><i class="fa-solid fa-plug mr-1"></i> Resumen de Conexiones</div>
+                        <div class="flex justify-between border-b border-white/10 pb-1">
+                            <span>Sensor 1 (Coco) AO</span>
+                            <span class="text-toad-neon font-bold">GPIO 34</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/10 pb-1">
+                            <span>Sensor 2 (Tricolor) AO</span>
+                            <span class="text-toad-neon font-bold">GPIO 35</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/10 pb-1">
+                            <span>Sensor 3 (Dracaena) AO</span>
+                            <span class="text-toad-neon font-bold">GPIO 32</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/10 pb-1">
+                            <span>LCD 16x2 SDA / SCL</span>
+                            <span class="text-toad-amber font-bold">GPIO 21 / 22</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Alimentación</span>
+                            <span class="text-white font-bold">5V USB / GND</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 4. MATEMÁTICA, FILTROS Y LÓGICA                                 -->
+        <!-- =============================================================== -->
+        <section id="matematica" class="space-y-6">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider bg-toad-ink text-toad-neon px-2.5 py-1 rounded">
+                    // 03. PROCESAMIENTO DE SEÑALES
+                </span>
+                <h2 class="text-2xl sm:text-4xl font-display font-extrabold text-toad-ink mt-2">
+                    Matemática, Filtrado &amp; Algoritmos
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Tarjeta 1 -->
+                <div class="toad-card p-5 rounded-xl space-y-2.5">
+                    <div class="text-toad-neon font-bold text-sm sm:text-base">
+                        1. Filtro Antirruido (10 muestras)
+                    </div>
+                    <p class="text-xs text-toad-mint/90 leading-relaxed">
+                        Para eliminar picos de ruido eléctrico, la función <code>leerSensorEstable()</code> captura 10 lecturas consecutivas separadas por <code>2ms</code> y calcula el promedio entero:
+                    </p>
+                    <div class="bg-black/40 p-2.5 rounded text-xs text-toad-amber font-mono">
+                        Promedio = ( ∑ analogRead(pin) ) / 10
+                    </div>
+                </div>
+
+                <!-- Tarjeta 2 -->
+                <div class="toad-card p-5 rounded-xl space-y-2.5">
+                    <div class="text-toad-neon font-bold text-sm sm:text-base">
+                        2. Inversión de Escala &amp; Calibración
+                    </div>
+                    <p class="text-xs text-toad-mint/90 leading-relaxed">
+                        En tierra seca la resistencia sube (<code>3400</code> = 0%) y en tierra húmeda conduce mejor (<code>1400</code> = 100%). Se acota e invierte con <code>constrain()</code> y <code>map()</code>:
+                    </p>
+                    <div class="bg-black/40 p-2.5 rounded text-xs text-toad-neon font-mono overflow-x-auto">
+                        map(constrain(val, 1400, 3400), 3400, 1400, 0, 100)
+                    </div>
+                </div>
+
+                <!-- Tarjeta 3 -->
+                <div class="toad-card p-5 rounded-xl space-y-2.5">
+                    <div class="text-toad-neon font-bold text-sm sm:text-base">
+                        3. Umbrales Botánicos Personalizados
+                    </div>
+                    <p class="text-xs text-toad-mint/90 leading-relaxed">
+                        Cada planta dispara la alerta <code>REGAR!</code> según su necesidad hídrica específica:
+                    </p>
+                    <div class="grid grid-cols-3 gap-2 text-center text-xs pt-1">
+                        <div class="bg-black/40 p-2 rounded">
+                            <span class="block text-[10px] text-toad-mint/70">COCO</span>
+                            <span class="font-bold text-toad-amber">45%</span>
+                        </div>
+                        <div class="bg-black/40 p-2 rounded">
+                            <span class="block text-[10px] text-toad-mint/70">TRICOLOR</span>
+                            <span class="font-bold text-toad-amber">30%</span>
+                        </div>
+                        <div class="bg-black/40 p-2 rounded">
+                            <span class="block text-[10px] text-toad-mint/70">DRACAENA</span>
+                            <span class="font-bold text-toad-amber">30%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 4 -->
+                <div class="toad-card p-5 rounded-xl space-y-2.5">
+                    <div class="text-toad-neon font-bold text-sm sm:text-base">
+                        4. Ciclo 24H + Detección Instantánea BT
+                    </div>
+                    <p class="text-xs text-toad-mint/90 leading-relaxed">
+                        Usa <code>millis()</code> para medir cada 24 horas (<code>86.400.000 ms</code>) sin bloquear el procesador, y detecta con <code>SerialBT.hasClient()</code> cuando se conecta el celular para enviar la trama CSV en el acto.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 5. CÓDIGO FUENTE C++ EN VENTANA TERMINAL                        -->
+        <!-- =============================================================== -->
+        <section id="codigo" class="space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider bg-toad-ink text-toad-neon px-2.5 py-1 rounded">
+                        // 04. FIRMWARE ESP32
+                    </span>
+                    <h2 class="text-2xl sm:text-4xl font-display font-extrabold text-toad-ink mt-2">
+                        Código Fuente Completo (.ino)
+                    </h2>
+                </div>
+
+                <button onclick="copiarCodigo()" class="px-4 py-2.5 rounded-lg bg-toad-card hover:bg-black text-toad-neon border-2 border-toad-cardBorder font-bold text-xs flex items-center gap-2 shadow-[4px_4px_0px_#07261d] active:translate-y-0.5 transition-all">
+                    <i class="fa-solid fa-copy"></i> Copiar Código
+                </button>
+            </div>
+
+            <div class="terminal-window">
+                <div class="bg-toad-termHeader text-white px-4 py-2.5 flex items-center justify-between text-xs">
+                    <span class="font-bold text-toad-neon truncate">Terminal — BioIntelligence_PlantaClub.ino</span>
+                    <div class="flex items-center space-x-2.5 text-slate-300 font-bold ml-2">
+                        <span>—</span>
+                        <span>□</span>
+                        <span>✕</span>
+                    </div>
+                </div>
+
+                <div class="p-4 sm:p-6 bg-[#071914] text-toad-mint overflow-x-auto text-xs sm:text-sm leading-relaxed">
+<pre id="codigoFuente" class="select-all font-mono"><code>// ============================================================================
+// PROYECTO: Bio Intelligence (PlantaClub) - Monitoreo Botánico con ESP32
+// EVENTO: Coolest Projects Argentina 2026
+// ============================================================================
+
+#include "BluetoothSerial.h"
+#include &lt;Wire.h&gt;
+#include &lt;LiquidCrystal_I2C.h&gt;
+
+BluetoothSerial SerialBT;
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+// Pines AO de los 3 sensores (ADC1)
+const int pinSensor1 = 34; // Coco (D34)
+const int pinSensor2 = 35; // Dracaena Tricolor (D35)
+const int pinSensor3 = 32; // Dracaena (D32)
+
+const int VALOR_SECO   = 3400; 
+const int VALOR_MOJADO = 1400; 
+
+// Límites de humedad para activar la alerta (en %)
+const int limiteCoco     = 45; 
+const int limiteTricolor = 30; 
+const int limiteDracaena = 30; 
+
+// Control de tiempo: 24 horas en milisegundos (24 * 60 * 60 * 1000)
+unsigned long ultimoEnvio = 0;
+const unsigned long INTERVALO = 86400000UL; 
+
+// Variable para detectar cuando el celular recién se conecta
+bool celularConectadoAntes = false;
+
+// Promedio de 10 lecturas para evitar saltos por ruido eléctrico
+int leerSensorEstable(int pin) {
+  long suma = 0;
+  for (int i = 0; i &lt; 10; i++) {
+    suma += analogRead(pin);
+    delay(2);
+  }
+  return suma / 10;
+}
+
+// Convierte la lectura cruda a porcentaje invirtiendo la escala
+int calcularPorcentaje(int lecturaCruda) {
+  int lecturaAcotada = constrain(lecturaCruda, VALOR_MOJADO, VALOR_SECO);
+  return map(lecturaAcotada, VALOR_SECO, VALOR_MOJADO, 0, 100);
+}
+
+void medirYEnviar() {
+  int lectura1 = leerSensorEstable(pinSensor1);
+  int lectura2 = leerSensorEstable(pinSensor2);
+  int lectura3 = leerSensorEstable(pinSensor3);
+
+  int humCoco     = calcularPorcentaje(lectura1);
+  int humTricolor = calcularPorcentaje(lectura2);
+  int humDracaena = calcularPorcentaje(lectura3);
+
+  String estado = "TODO OK";
+  if (humCoco &lt; limiteCoco || humTricolor &lt; limiteTricolor || humDracaena &lt; limiteDracaena) {
+    estado = "REGAR!";
+  }
+
+  // 1. Mostrar en la pantalla LCD
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Co:"); lcd.print(humCoco); lcd.print("%");
+  lcd.setCursor(8, 0);
+  lcd.print("Tr:"); lcd.print(humTricolor); lcd.print("%");
+  lcd.setCursor(0, 1);
+  lcd.print("Dr:"); lcd.print(humDracaena); lcd.print("%");
+  lcd.setCursor(8, 1);
+  lcd.print(estado);
+
+  // 2. Enviar a la App por Bluetooth (Formato: Coco,Tricolor,Dracaena,Estado)
+  SerialBT.printf("%d,%d,%d,%s\n", humCoco, humTricolor, humDracaena, estado.c_str());
+
+  // 3. Mostrar en el Monitor Serie de la PC
+  Serial.printf("BT -&gt; %d,%d,%d,%s | Crudos: Co(%d) Tr(%d) Dr(%d)\n", 
+                humCoco, humTricolor, humDracaena, estado.c_str(), lectura1, lectura2, lectura3);
+}
+
+void setup() {
+  Serial.begin(115200);
+  
+  // Inicia el Bluetooth con el nombre "PlantaClub"
+  SerialBT.begin("PlantaClub"); 
+  Serial.println("Bluetooth iniciado como 'PlantaClub'");
+
+  // Configuración del ADC del ESP32
+  analogReadResolution(12);
+  analogSetAttenuation(ADC_11db);
+
+  pinMode(pinSensor1, INPUT);
+  pinMode(pinSensor2, INPUT);
+  pinMode(pinSensor3, INPUT);
+
+  Wire.begin(21, 22);
+  lcd.init();
+  lcd.backlight();
+
+  lcd.setCursor(0, 0);
+  lcd.print("PlantaClub Listo");
+  lcd.setCursor(0, 1);
+  lcd.print("Modo 24 Horas");
+  delay(1500);
+
+  // Primera lectura apenas se enciende el ESP32
+  medirYEnviar();
+}
+
+void loop() {
+  unsigned long tiempoActual = millis();
+
+  // 1. Si el celular se acaba de conectar a la App, enviar lectura inmediata
+  bool celularConectadoAhora = SerialBT.hasClient();
+  if (celularConectadoAhora &amp;&amp; !celularConectadoAntes) {
+    delay(500);
+    medirYEnviar();
+  }
+  celularConectadoAntes = celularConectadoAhora;
+
+  // 2. Actualización automática cada 24 horas (86.400.000 ms)
+  if (tiempoActual - ultimoEnvio &gt;= INTERVALO) {
+    ultimoEnvio = tiempoActual;
+    medirYEnviar();
+  }
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =============================================================== -->
+        <!-- 6. FUTURO DEL PROYECTO + TARJETA FINAL "BIO INTELLIGENCE"       -->
+        <!-- =============================================================== -->
+        <section id="futuro" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-4">
+            
+            <div class="lg:col-span-8 space-y-4">
+                <span class="text-xs font-bold uppercase tracking-wider bg-toad-ink text-toad-neon px-2.5 py-1 rounded">
+                    // 05. PRÓXIMOS PASOS
+                </span>
+                <h2 class="text-2xl sm:text-4xl font-display font-extrabold text-toad-ink">
+                    El Futuro de Bio Intelligence 🌱
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="toad-card p-4 rounded-xl space-y-1.5">
+                        <div class="text-toad-neon font-bold text-sm">1. Horas en Alerta</div>
+                        <p class="text-xs text-toad-mint/90">
+                            Guardar en memoria Flash/EEPROM cuántas horas lleva cada planta pidiendo agua (<code>REGAR!</code>).
+                        </p>
+                    </div>
+                    <div class="toad-card p-4 rounded-xl space-y-1.5">
+                        <div class="text-toad-amber font-bold text-sm">2. PCB + Carcasa 3D</div>
+                        <p class="text-xs text-toad-mint/90">
+                            Diseñar una placa PCB propia en KiCAD y una carcasa impresa en 3D resistente a salpicaduras.
+                        </p>
+                    </div>
+                    <div class="toad-card p-4 rounded-xl space-y-1.5">
+                        <div class="text-sky-400 font-bold text-sm">3. Riego Automático</div>
+                        <p class="text-xs text-toad-mint/90">
+                            Sumar relés y mini bombas sumergibles de 5V para hidratar cada maceta automáticamente.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta blanca esquina inferior derecha con nombre completo BIO INTELLIGENCE -->
+            <div class="lg:col-span-4 flex flex-col items-center lg:items-end">
+                <p class="font-bold italic text-toad-ink text-base mb-2">
+                    ¡Súmate a Bio Intelligence hoy!
+                </p>
+                <div class="bg-white border-4 border-toad-ink rounded-xl p-4 shadow-[8px_8px_0px_#07261d] w-full max-w-xs text-toad-ink space-y-3">
+                    <div class="flex items-center justify-between border-b-2 border-toad-ink pb-2 gap-2">
+                        <span class="font-display font-extrabold text-base sm:text-lg tracking-tight">BIO INTELLIGENCE</span>
+                        <span class="bg-toad-bg text-white text-[10px] font-bold px-2 py-0.5 rounded border border-toad-ink whitespace-nowrap">ESP32 + BT</span>
+                    </div>
+                    <div class="text-xs space-y-1 font-mono">
+                        <div><strong>Bluetooth ID:</strong> PlantaClub</div>
+                        <div><strong>Plantas:</strong> Coco / Tricolor / Dracaena</div>
+                        <div><strong>Evento:</strong> Coolest Projects 2026</div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Notificación flotante al copiar código -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-toad-card text-toad-neon border-2 border-toad-neon px-4 py-3 rounded-lg font-mono font-bold text-xs shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 flex items-center gap-2">
+        <i class="fa-solid fa-circle-check text-base"></i>
+        <span>¡Código copiado al portapapeles!</span>
+    </div>
+
+    <script>
+        function copiarCodigo() {
+            const codeText = document.getElementById('codigoFuente').innerText;
+            const el = document.createElement('textarea');
+            el.value = codeText;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+            const toast = document.getElementById('toast');
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
