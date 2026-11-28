@@ -176,14 +176,22 @@
                 </span>
             </div>
 
-            <!-- Enlaces rápidos adaptados a celular -->
-            <nav class="flex items-center space-x-3 sm:space-x-5 text-[11px] sm:text-xs overflow-x-auto max-w-full py-0.5 no-scrollbar">
-                <a href="#bitacora" class="hover:text-toad-neon whitespace-nowrap transition-colors">[01. Fotos]</a>
-                <a href="#arquitectura" class="hover:text-toad-neon whitespace-nowrap transition-colors">[02. Pinout]</a>
-                <a href="#matematica" class="hover:text-toad-neon whitespace-nowrap transition-colors">[03. Lógica]</a>
-                <a href="#codigo" class="hover:text-toad-neon whitespace-nowrap transition-colors">[04. Código]</a>
-                <a href="#futuro" class="hover:text-toad-neon whitespace-nowrap transition-colors">[05. Futuro]</a>
-            </nav>
+            <!-- Enlaces rápidos + Botón de control de Auto-Scroll -->
+            <div class="flex items-center gap-3 max-w-full overflow-x-auto no-scrollbar py-0.5">
+                <nav class="flex items-center space-x-3 sm:space-x-4 text-[11px] sm:text-xs">
+                    <a href="#bitacora" class="hover:text-toad-neon whitespace-nowrap transition-colors">[01. Fotos]</a>
+                    <a href="#arquitectura" class="hover:text-toad-neon whitespace-nowrap transition-colors">[02. Pinout]</a>
+                    <a href="#matematica" class="hover:text-toad-neon whitespace-nowrap transition-colors">[03. Lógica]</a>
+                    <a href="#codigo" class="hover:text-toad-neon whitespace-nowrap transition-colors">[04. Código]</a>
+                    <a href="#futuro" class="hover:text-toad-neon whitespace-nowrap transition-colors">[05. Futuro]</a>
+                </nav>
+
+                <!-- Botón para Pausar/Reanudar el Auto-Scroll en el stand -->
+                <button id="btnAutoScroll" onclick="toggleAutoScroll()" class="bg-black/40 hover:bg-black/70 text-toad-neon border border-toad-neon/50 px-2.5 py-1 rounded text-[11px] font-bold whitespace-nowrap flex items-center gap-1.5 transition-colors" title="Pausar o reanudar bajada automática">
+                    <i id="iconAutoScroll" class="fa-solid fa-pause"></i>
+                    <span id="textAutoScroll">Auto-Scroll: ON</span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -322,7 +330,6 @@
                             <span class="ml-2 font-bold">[+]</span>
                         </div>
                         
-                        <!-- 🚨 AQUÍ PONER IMAGEN 1: Cambia el nombre en src="..." por tu primera foto 🚨 -->
                         <div class="bg-slate-900 h-56 sm:h-72 overflow-hidden relative">
                             <img src="foto1.png" 
                                  alt="Etapa 1: Diseño Conceptual Tinkercad" 
@@ -347,9 +354,6 @@
                             "¡10/10/2026! Buscando los componentes. La mayoría los tenía, solo me faltaban dos sensores de humedad."
                         </p>
                     </div>
-                    <p class="text-toad-ink font-bold italic text-sm sm:text-base pl-2">
-                     
-                    </p>
                 </div>
 
                 <!-- Tarjeta de comentario para Imagen 2 -->
@@ -360,10 +364,7 @@
                             "¡Empezamos con el desarrollo! Conectamos todos los sensores al ESP32 y la pantalla LCD 16x2 sobre la mesada para probar que todo prenda sin quemar nada."
                         </p>
                     </div>
-                    <p class="text-toad-ink font-bold italic text-sm sm:text-base pl-2">
-                      
-                    </p>
-                </div>
+                </div> 
 
                 <!-- ========================================================= -->
                 <!-- VENTANA TERMINAL 2 (ESPACIO PARA LA IMAGEN 2)             -->
@@ -386,7 +387,6 @@
                             <span class="ml-2 font-bold">[+]</span>
                         </div>
 
-                        <!-- 🚨 AQUÍ PONER IMAGEN 2: Cambia el nombre en src="..." por tu segunda foto 🚨 -->
                         <div class="bg-slate-900 h-56 sm:h-72 overflow-hidden relative">
                             <img src="componentes (1).jpeg" 
                                  alt="Etapa 2: Montaje y Prueba Eléctrica en Protoboard" 
@@ -424,7 +424,6 @@
                             <span class="ml-2 font-bold">[+]</span>
                         </div>
 
-                        <!-- 🚨 AQUÍ PONER IMAGEN 3: Cambia el nombre en src="..." por tu tercera foto 🚨 -->
                         <div class="bg-slate-900 h-56 sm:h-72 overflow-hidden relative">
                             <img src="listo (1).jpeg" 
                                  alt="Etapa 3: Instalación y Calibración en Macetas Reales" 
@@ -449,9 +448,6 @@
                             "¡Terminamosss! Cargamos el código, revisamos conexiones y calibramos los valores reales en tierra con Coco, Dracaena Tricolor y Dracaena."
                         </p>
                     </div>
-                    <p class="text-toad-ink font-bold italic text-sm sm:text-base pl-2">
-                    
-                    </p>
                 </div>
 
             </div>
@@ -868,6 +864,9 @@ void loop() {
     </div>
 
     <script>
+        // ====================================================================
+        // 1. FUNCIÓN PARA COPIAR EL CÓDIGO FUENTE
+        // ====================================================================
         function copiarCodigo() {
             const codeText = document.getElementById('codigoFuente').innerText;
             const el = document.createElement('textarea');
@@ -886,6 +885,99 @@ void loop() {
                 toast.classList.add('translate-y-20', 'opacity-0');
             }, 3000);
         }
+
+        // ====================================================================
+        // 2. SISTEMA DE AUTO-SCROLL SUAVE CON REINICIO AUTOMÁTICO
+        // ====================================================================
+        let autoScrollActivo = true;
+        let enEspera = false;
+        let acumuladorPixeles = 0;
+        let timerInteraccionUsuario = null;
+
+        // Velocidad de lectura: 0.6 píxeles por frame (~36 px por segundo).
+        // Si quieres que baje aún más despacio, cámbialo a 0.45. Si quieres más rápido, a 0.85.
+        const VELOCIDAD_LECTURA = 0.6;
+
+        function cicloAutoScroll() {
+            if (autoScrollActivo && !enEspera) {
+                acumuladorPixeles += VELOCIDAD_LECTURA;
+
+                // Desplazamos cuando acumulamos al menos 1 píxel entero
+                if (acumuladorPixeles >= 1) {
+                    const paso = Math.floor(acumuladorPixeles);
+                    window.scrollBy(0, paso);
+                    acumuladorPixeles -= paso;
+                }
+
+                // Verificamos si llegamos al final de la página
+                const posicionActual = window.innerHeight + window.scrollY;
+                const alturaTotal = document.documentElement.scrollHeight;
+
+                if (posicionActual >= alturaTotal - 3) {
+                    enEspera = true;
+
+                    // Espera 4 segundos al final para que terminen de leer la última sección
+                    setTimeout(() => {
+                        if (!autoScrollActivo) {
+                            enEspera = false;
+                            return;
+                        }
+
+                        // Sube suavemente hasta arriba de todo
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                        // Una vez arriba, espera 3.5 segundos en la portada antes de volver a bajar
+                        setTimeout(() => {
+                            enEspera = false;
+                        }, 3500);
+
+                    }, 4000);
+                }
+            }
+            requestAnimationFrame(cicloAutoScroll);
+        }
+
+        // Botón para prender o apagar el Auto-Scroll manualmente
+        function toggleAutoScroll() {
+            autoScrollActivo = !autoScrollActivo;
+            const btn = document.getElementById('btnAutoScroll');
+            const icon = document.getElementById('iconAutoScroll');
+            const text = document.getElementById('textAutoScroll');
+
+            if (autoScrollActivo) {
+                enEspera = false;
+                icon.className = 'fa-solid fa-pause';
+                text.textContent = 'Auto-Scroll: ON';
+                btn.classList.remove('text-toad-amber', 'border-toad-amber/50');
+                btn.classList.add('text-toad-neon', 'border-toad-neon/50');
+            } else {
+                icon.className = 'fa-solid fa-play';
+                text.textContent = 'Auto-Scroll: OFF';
+                btn.classList.remove('text-toad-neon', 'border-toad-neon/50');
+                btn.classList.add('text-toad-amber', 'border-toad-amber/50');
+            }
+        }
+
+        // Si alguien usa la rueda del mouse o toca la pantalla para leer algo puntual,
+        // pausa el scroll automático durante 4 segundos y luego sigue solo.
+        function pausarTemporalmentePorUsuario() {
+            if (!autoScrollActivo) return;
+            enEspera = true;
+            clearTimeout(timerInteraccionUsuario);
+            timerInteraccionUsuario = setTimeout(() => {
+                enEspera = false;
+            }, 4000);
+        }
+
+        window.addEventListener('wheel', pausarTemporalmentePorUsuario, { passive: true });
+        window.addEventListener('touchstart', pausarTemporalmentePorUsuario, { passive: true });
+
+        // Espera 2.5 segundos al abrir la página y arranca el ciclo
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                requestAnimationFrame(cicloAutoScroll);
+            }, 2500);
+        });
     </script>
 </body>
 </html>
